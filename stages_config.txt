@@ -1,2 +1,12 @@
-{'type': 'button', 'id': 'submit', 'name': 'submit', 'value': 'adf a'}
-{'type': 'button', 'id': 'aineri', 'name': 'aienrie', 'value': 'aienrier'}
+{'type': 'navigate', 'url': 'https://ssologin.unsw.edu.au/cas/login?service=https%3A%2F%2Fmy.unsw.edu.au%2Factive%2FstudentClassEnrol%2Fcourses.xml'}
+{'type': 'textbox', 'id': 'username', 'name': 'username', 'text': 'User ID', 'hidden': False, 'filltext': 'z5202535'}
+{'type': 'textbox', 'id': 'password', 'name': 'password', 'text': 'Enter your password', 'hidden': True, 'filltext': b'UmlzXkAlMDA1'}
+{'type': 'button', 'id': 'submit', 'name': 'submit', 'value': 'Agree and sign on', 'text': 'Agree and sign on'}
+{'type': 'anchor', 'text': 'Sign On'}
+{'type': 'anchor', 'text': 'My Student Profile'}
+{'type': 'anchor', 'text': 'Update Your Enrolment'}
+{'type': 'button', 'name': 'bsdsSubmit-update-enrol', 'value': 'Update Enrolment', 'text': 'Update Enrolment'}
+{'type': 'anchor', 'id': 'term5196Link’}
+{'type': 'text', 'text': '66/66', 'exists': False}
+{'type': 'email', 'subject': 'AVAILABLE: Computer Vision Course', 'message': 'Hurry!!! Your prayers have been listened.', 'receiver': 'sharmarishap@gmail.com', 'id': 'iamrishap@gmail.com', 'password': b'cmlzNjI1MDA1'}
+{'type': 'FINISH'}

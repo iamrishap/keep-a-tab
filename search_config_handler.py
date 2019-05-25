@@ -2,6 +2,7 @@ import base64
 from getpass import getpass
 import os
 
+
 def check_config_exists():
     if not os.path.isfile('stages_config.txt'):
         return False
@@ -13,8 +14,44 @@ def check_config_exists():
             return True
 
 
+def clear_search_config():
+    global config_handler
+    config_handler.truncate(0)
+
+
+def create_search_config():
+    global config_handler
+    config_handler = open('stages_config.txt', 'w+')
+    step_choice = None
+    step_possibilities = """
+        1. Go to a URL
+        2. Input a text in textbox
+        3. Click on a button
+        4. Enter text in a textbox
+        5. Click on an anchor(link)
+        6. Search a text
+        7. Send a text message
+        8. Send an email
+        9. Finish the flow
+        10. Delete and start again
+        11. Exit(without saving)
+    """
+    try:
+        while step_choice != '11' or step_choice != '9':
+            print("What do you want this step to do? Choose one of the options below:")
+            print(step_possibilities)
+            step_choice = input().strip()
+            switch_handler(step_choice)
+    finally:
+        config_handler.close()
+
+
 def finish_flowchart():
-    pass
+    global config_handler
+    finish_config = dict()
+    finish_config["type"] = 'FINISH'
+    config_handler.write(str(finish_config))
+    print("Steps complete")
 
 
 def get_anchor_click_details():
@@ -71,7 +108,7 @@ def get_email_sending_details():
     print("What is the Subject for the email that you want to send?")
     subject = input().strip()
     if subject != '':
-        email_config["message"] = subject
+        email_config["subject"] = subject
     print("What is the email message you want to send?")
     message = input().strip()
     if message != '':
@@ -86,7 +123,9 @@ def get_email_sending_details():
     if sender_email != '':
         email_config["id"] = sender_email
     print("What is the password for {} email ID?".format(sender_email))
-    password = base64.b64encode(getpass(prompt="Enter password and then press enter. Input is hidden."))
+    raw_pwd = getpass(prompt="Enter password and then press enter. Input is hidden.")
+    byte_pwd = raw_pwd.encode('utf-8')
+    password = base64.b64encode(byte_pwd)
     if password != '':
         email_config["password"] = password
     if not subject or not message or not recipient_email or not sender_email or not password:
@@ -126,33 +165,6 @@ def get_mobile_text_details():
     print("Button config saved.\r\n\r\n")
 
 
-def create_search_config():
-    global config_handler
-    config_handler = open('stages_config.txt', 'w+')
-    step_choice = None
-    step_possibilities = """
-        1. Go to a URL
-        2. Input a text in textbox
-        3. Click on a button
-        4. Enter text in a textbox
-        5. Click on an anchor(link)
-        6. Search a text
-        7. Send a text message
-        8. Send an email
-        9. Finish the flow
-        10. Delete and start again
-        11. Exit(without saving)
-    """
-    try:
-        while step_choice != '8':
-            print("What do you want this step to do? Choose one of the options below:")
-            print(step_possibilities)
-            step_choice = input().strip()
-            switch_handler(step_choice)
-    finally:
-        config_handler.close()
-
-
 def get_search_text():
     global config_handler
     search_config = {"type": "text"}
@@ -161,7 +173,7 @@ def get_search_text():
     if text != '':
         search_config["text"] = text
     print("Do you want its existence or absence on the page? Enter 1 for Existence and 2 for Absence.")
-    search_config["exists"] = True if input.strip() == '1' else False
+    search_config["exists"] = True if input().strip() == '1' else False
     config_handler.write(str(search_config) + "\r\n")
     print("Search config saved.\r\n\r\n")
 
@@ -190,15 +202,18 @@ def get_text_input_details():
     print("Are you going to input a confidential text? Like account number, password etc? Input 1 for Yes or 2 for No")
     confidential = True if input().strip() == '1' else False
     if confidential:
-        text = base64.b64encode(getpass(prompt="Enter text and then press enter. Input is hidden."))
-        config_handler["hidden"] = True
+        raw_text = getpass(prompt="Enter text and then press enter. Input is hidden.")
+        byte_text = raw_text.encode('utf-8')
+        text = base64.b64encode(byte_text)
+        textbox_config["hidden"] = True
     else:
+        print("Enter text")
         text = input().strip()
-        config_handler["hidden"] = False
+        textbox_config["hidden"] = False
     if text != '':
         textbox_config["filltext"] = text
     config_handler.write(str(textbox_config) + "\r\n")
-    print("textbox config saved.\r\n\r\n")
+    print("Textbox config saved.\r\n\r\n")
 
 
 def navigate_to_url():
@@ -208,7 +223,7 @@ def navigate_to_url():
     print("Enter the URL you need to navigate to")
     url = input().strip()
     nav_config["url"] = url
-    nav_config.write(str(nav_config) + "\r\n")
+    config_handler.write(str(nav_config) + "\r\n")
     print("Nav config saved.\r\n\r\n")
 
 
@@ -216,24 +231,19 @@ def read_search_config():
     return open('stages_config.txt', 'r')
 
 
-def show_flowchart():
-    pass
-
-
-def start_from_scratch():
-    pass
-
-
 def switch_handler(i):
     switch_statement = {
-        '1': get_button_click_details,
+        '1': navigate_to_url,
         '2': get_text_input_details,
-        '3': get_anchor_click_details,
-        '4': get_mobile_text_details,
-        '5': get_email_sending_details,
-        '6': finish_flowchart,
-        '7': start_from_scratch,
-        '8': start_from_scratch
+        '3': get_button_click_details,
+        '4': get_text_input_details,
+        '5': get_anchor_click_details,
+        '6': get_search_text,
+        '7': get_mobile_text_details,
+        '8': get_email_sending_details,
+        '9': finish_flowchart,
+        '10': clear_search_config,
+        '11': clear_search_config
     }
     func = switch_statement.get(i, lambda: "Invalid Option")
     return func()
