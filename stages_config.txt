@@ -1,0 +1,2 @@
+{'type': 'button', 'id': 'submit', 'name': 'submit', 'value': 'adf a'}
+{'type': 'button', 'id': 'aineri', 'name': 'aienrie', 'value': 'aienrier'}
