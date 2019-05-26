@@ -74,7 +74,9 @@ def perform_button_click(args):
 
 def perform_anchor_click(args):
     anchor = None
-    if args['text']:
+    if args['id']:  # Prefer ID over name
+        anchor = driver.find_element_by_id(args['id'])
+    if args['text'] and not anchor:
         anchor = driver.find_element_by_link_text(args['text'])
     if anchor:
         anchor.click()
